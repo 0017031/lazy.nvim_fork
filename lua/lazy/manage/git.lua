@@ -116,7 +116,16 @@ end
 ---@param plugin LazyPlugin
 ---@return GitInfo?
 function M.get_target(plugin)
-  local branch = assert(M.get_branch(plugin))
+  local tries = 0                                         -- initialize the counter
+  local branch = nil                                      -- initialize the branch
+  while tries < 10 and branch == nil do                   -- loop until 10 tries or branch is not nil
+    tries = tries + 1                                     -- increment the counter
+    branch = M.get_branch(plugin)                         -- try to get the branch
+  end
+  assert(branch, "Failed to get the branch after 10 tries") -- assert the branch
+
+
+  -- local branch = assert(M.get_branch(plugin))
 
   if plugin.commit then
     return {
